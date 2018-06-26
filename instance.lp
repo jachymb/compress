@@ -1,5 +1,6 @@
 tapeSymbolRepresentationBits(1).
 stateRepresentationBits(4).
+directionRepresentationBits(1).
 memorySize(2048).
 maxtime(4096).
 desired(0,0).

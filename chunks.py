@@ -26,7 +26,7 @@ def checkrestarts(data, l):
         if not s:
             yield ch1, 0
         if ch1 in s and s[ch1] != ch2:
-            yield ch2, i 
+            yield ch2, i
         else:
             s[ch1] = ch2
     return s
@@ -41,6 +41,14 @@ def checkl(data, l):
         s.add(ch)
     return True
 
+def checklc(data, l):
+    g = grouper(l, data, 0)
+    s = Counter()
+    #for i, ch in enumerate(g):
+    for ch in g:
+        s[ch] += 1
+    return s
+
 def findl(data):
     #return next(filter(partial(checkl, data), count(1)))
     for l in count(1):
@@ -50,10 +58,10 @@ def findl(data):
 with open(sys.argv[1], 'rb') as f:
     data = f.read()
 
-results = []
-for c in count(1):
-    r = checkrestarts(iterbits(data), c)
-    l = sum(1 for _ in r)
-    print(c, l)
-    results.append(l)
+#results = []
+#for c in count(1):
+#    r = checkrestarts(iterbits(data), c)
+#    l = sum(1 for _ in r)
+#    print(c, l)
+#    results.append(l)
 #print(findl(data))

@@ -1,10 +1,12 @@
 import sys
 import numpy as np
+from itertools import chain
 
 fname = sys.argv[1]
 chl = int(sys.argv[2])
 nch = int(sys.argv[3])
 bit = int(sys.argv[4])
+hidden = int(sys.argv[5])
 
 bits = 8*chl
 assert bit < bits
@@ -27,17 +29,32 @@ def ch2s(ch):
 def forAsp(fname):
     gen = chunks(fname, nch+1, chl)
     prev = next(gen)
-    print(f"nvars({bits}).")
-    for chunk in gen:
-        v = "posObs" if chunk[0] else "negObs"
+    print(f"nvars({bits+hidden}).")
+    print(f"hidden({hidden}).")
+    for i, chunk in enumerate(gen):
+        v = "obs" if chunk[bit] else "-obs"
         s = 's'+ch2s(prev)
         print(f"{v}({s}).")
         for i,b in enumerate(reversed(prev)):
             s2 = 'bit' if b==1 else '-bit'
             print(f"{s2}({s},{i}).")
-
-
         prev = chunk
+
+def forAspMulti(fname):
+    gen = chunks(fname, nch+1, chl)
+    prev = next(gen)
+    print(f"nvars({bits+hidden}).")
+    print(f"hidden({hidden}).")
+    for i, chunk in enumerate(gen):
+        s = f'o{i}'
+        for bit in range(bits):
+            v = "obs" if chunk[bit] else "-obs"
+            print(f"{v}({s},{bit}).")
+        for i,b in enumerate(reversed(prev)):
+            s2 = 'bit' if b==1 else '-bit'
+            print(f"{s2}({s},{i}).")
+        prev = chunk
+
 
 def forEspresso(fname):
     gen = chunks(fname, nch+1, chl)
@@ -50,5 +67,14 @@ def forEspresso(fname):
         prev = chunk
     print(".e")
 
-forEspresso(fname)
+def forMealyBit(fname):
+    assert chl == 1
+    gen = chain.from_iterable(chunks(fname, (nch+1)//8, chl))
+    print(f"symbolRepresentationBits(1).")
+    print(f"iterations({nch}).")
+    for i, bit in enumerate(gen):
+        if bit:
+            print(f"desired({i+1}).")
+
+forMealyBit(fname)
 
